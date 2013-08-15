@@ -82,7 +82,7 @@
                     switch (self.direction) {
                         case 1: // left
                             //body.position.x += 0.2;
-                            body.applyCentralImpulse( new THREE.Vector3( 10, 0, 0 ) );
+                            body.applyCentralImpulse( new THREE.Vector3( 50, 0, 0 ) );
                             camera.position.copy({
                                 x: body.position.x - 15,
                                 y: body.position.y + 2.5,
@@ -108,7 +108,7 @@
                                 z: body.position.z + 1
                             });
                             //body.position.z += 0.2;
-                            body.applyCentralImpulse( new THREE.Vector3( 0, 0, -0.2 ) );
+                            body.applyCentralImpulse( new THREE.Vector3( 0, 0, -50 ) );
                             break;
 
                         case 3: // right
@@ -123,7 +123,7 @@
                                 z: body.position.z
                             });
                             //body.position.x -= 0.2;
-                            body.applyCentralImpulse( new THREE.Vector3( -0.2, 0, 0 ) );
+                            body.applyCentralImpulse( new THREE.Vector3( -50, 0, 0 ) );
                             break;
                         case 4: // back
                             camera.position.copy({
@@ -137,7 +137,7 @@
                                 z: body.position.z - 1
                             });
                             //body.position.z -= 0.2;
-                            body.applyCentralImpulse( new THREE.Vector3( 0, 0, -0.2 ) );
+                            body.applyCentralImpulse( new THREE.Vector3( 0, 0, 50 ) );
                             break;
                     }
                     camera.position.copy({
@@ -210,7 +210,7 @@
                 box = null,
                 box_material = new Physijs.createMaterial(
                     new THREE.MeshLambertMaterial({map: THREE.ImageUtils.loadTexture('img/plywood.jpg')}),
-                    1.0, // low friction
+                    0.9, // low friction
                     0.9 // high restitution
                 ),
                 box_geometry = new THREE.CubeGeometry( 5, 5, 5 ),

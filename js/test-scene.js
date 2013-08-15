@@ -26,12 +26,19 @@
             this.initCamera();
             this.initLight();
             this.initGround();
-            this.initControls();
+            
             this.initLoad();
-            this.initShapes();
+            //this.initControls();
+            //this.initShapes();                      
             
+        },
+        initPhysijs:function(){
+            g.Physijs.scripts.worker = 'plugin/physijs/physijs_worker.js';
+            g.Physijs.scripts.ammo = 'ammo.js';
+        },
+        
+        animation:function(){
             var self = this;
-            
             function render() {
                 self.controls.update( self.clock.getDelta() );
                 self.renderer.render( self.scene, self.camera );
@@ -39,10 +46,6 @@
             }
             self.scene.simulate();
             render();
-        },
-        initPhysijs:function(){
-            g.Physijs.scripts.worker = 'plugin/physijs/physijs_worker.js';
-            g.Physijs.scripts.ammo = 'ammo.js';
         },
         /**
          * 初始化渲染器
@@ -100,8 +103,32 @@
             this.scene.add(ground);
         },
         initControls:function(){
-            var controls = new THREE.FirstPersonControls( this.camera ),
+            var controls = null,
                 clock = new THREE.Clock();
+            function getMesh(obj){
+
+                var rets = [];
+
+                if( !(obj instanceof THREE.Mesh) && obj.children ){
+
+                        for(var i=0; i<obj.children.length;i++){
+
+                                var childs = getMesh(obj.children[i]);
+
+                                for(var j=0; j<childs.length; j++) rets.push( childs[j] );                      
+
+                        }                       
+
+                }else{
+
+                        rets.push( obj );                       
+
+                }               
+
+                return rets;
+
+            }
+            controls = new g.physijsGame.myFirstPersonControls( this.camera , undefined, getMesh(this.object))
 
             controls.movementSpeed = 1000;
             controls.lookSpeed = 0.125;
@@ -119,7 +146,7 @@
                     100000
                 );
             
-            camera.position.set(0, 0, 10000);
+            camera.position.set(0, 1000, 10000);
             camera.lookAt(this.scene.position);
             this.camera = camera;
             this.scene.add(camera);            
@@ -133,8 +160,10 @@
 
                 var object = event.content;
                 console.log(object);
-    
+                self.object = object;
                 self.scene.add( object );
+                self.initControls.call(self);
+                self.animation.call(self);
                 //self.camera.lookAt(new THREE.Vector3(0,-100,0));
     
             });

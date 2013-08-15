@@ -81,7 +81,7 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 			this.domElement.focus();
 
 		}
-
+ 
 		event.preventDefault();
 		event.stopPropagation();
 
