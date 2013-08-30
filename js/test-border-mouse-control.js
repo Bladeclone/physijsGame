@@ -130,7 +130,7 @@
                 return rets;
 
             }
-            controls = new g.physijsGame.myFirstPersonControls( this.camera , undefined, getMesh(this.object))
+            controls = new THREE.BorderMouseFirstPersonControls({camera: this.camera, collisionObject: getMesh(this.object)})
 
             controls.movementSpeed = 1000;
             controls.lookSpeed = 0.125;
@@ -229,7 +229,6 @@
                 var intersects = raycaster.intersectObjects( [self.plane] );
 
                 if ( intersects.length > 0 ) {
-                    g.console.log("点击了");
                     self.camera.position.z = 1000;
                 }
             }, false);
