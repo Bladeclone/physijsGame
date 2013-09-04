@@ -1,13 +1,21 @@
 /**
+ * 第一人称鼠标边界控制器
+ * 实现功能，鼠标控制第一人称视角，在鼠标移到边界时移动视角
  * @author yanhaijing
  */
 
-(function($, g){
+(function(g){
     "use strict";
     var
         T = g.THREE,
         BorderMouseFirstPersonControls = null;
-        
+    
+    /**
+     * 鼠标边界第一人称控制器对象
+     * @class BorderMouseFirstPersonControls
+     * @constructor
+     * @param option {Object} 配置参数对象
+     */    
     BorderMouseFirstPersonControls = function(option){
         
         this.option = this.extend({
@@ -17,7 +25,10 @@
             collisionObject: [],//要检测的碰撞对象
             downable: true,//能否向下移动
             upable: true,//能否按键向上移动
-            cameraWidth: 100//摄像机的宽度，用来计算碰撞时摄像机与墙面建的距离
+            cameraWidth: 10,//摄像机的宽度，用来计算碰撞时摄像机与墙面建的距离
+            movementSpeed: 10.,//默认移动速度
+            lookSpeed: 0.005,//默认视野切换速度
+            lookVertical: true//是否能上下看
         }, option);
         
         this.object = this.option.camera;
@@ -25,10 +36,10 @@
     
         this.domElement = ( this.option.domElement !== undefined ) ? domElement : document;
     
-        this.movementSpeed = 1.0;
-        this.lookSpeed = 0.005;
+        this.movementSpeed = this.option.movementSpeed;
+        this.lookSpeed = this.option.lookSpeed;
     
-        this.lookVertical = true;
+        this.lookVertical = this.option.lookVertical;
         this.autoForward = false;
         // this.invertVertical = false;
     
@@ -250,7 +261,6 @@
                     var distance = intersections[ 0 ].distance;
                     
                     if ( !(distance <= actualMoveSpeed + this.option.cameraWidth) ) {
-                        g.console.log(distance);
                         this.object.translateZ( - ( actualMoveSpeed + this.autoSpeedFactor ) );
                     }
 
@@ -269,7 +279,6 @@
                     var distance = intersections[ 0 ].distance;
                     
                     if ( !(distance <= actualMoveSpeed + this.option.cameraWidth) ) {
-                        g.console.log(distance);
                         this.object.translateZ( actualMoveSpeed );
                     }
 
@@ -298,7 +307,6 @@
                     var distance = intersections[ 0 ].distance;
                     
                     if ( !(distance <= actualMoveSpeed + this.option.cameraWidth) ) {
-                        g.console.log(distance);
                         this.object.translateX( - actualMoveSpeed );
                     }
 
@@ -326,7 +334,6 @@
                     var distance = intersections[ 0 ].distance;
                     
                     if ( !(distance <= actualMoveSpeed + this.option.cameraWidth) ) {
-                        g.console.log(distance);
                         this.object.translateX( actualMoveSpeed );
                     }
 
@@ -379,7 +386,6 @@
             targetPosition.z = position.z + 100 * Math.sin( this.phi ) * Math.sin( this.theta );
     
             this.object.lookAt( targetPosition );
-            //console.log(this.mouseX,this.mouseY);
         },
         
         extend:function() {
@@ -448,4 +454,4 @@
     };
         
     T.BorderMouseFirstPersonControls = T.BorderMouseFirstPersonControls || BorderMouseFirstPersonControls;
-}(jQuery, window));
+}(window));
