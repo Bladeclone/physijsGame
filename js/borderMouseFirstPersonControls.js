@@ -14,7 +14,10 @@
             collision: true,//是否添加相机碰撞检测
             mouseDownMove: false,//是否添加默认鼠标点击前进后退事件
             borderWidth: 100,//默认数遍边界值为100
-            collisionObject: []//要检测的碰撞对象
+            collisionObject: [],//要检测的碰撞对象
+            downable: true,//能否向下移动
+            upable: true,//能否按键向上移动
+            cameraWidth: 100//摄像机的宽度，用来计算碰撞时摄像机与墙面建的距离
         }, option);
         
         this.object = this.option.camera;
@@ -75,7 +78,9 @@
             this.domElement.addEventListener( 'mousedown', this.onMouseDown.bind(this), false );
             this.domElement.addEventListener( 'mouseup', this.onMouseUp.bind(this), false );
         }
-        this.domElement.addEventListener( 'mousemove', this.onMouseMove.bind(this), false );        
+        this.domElement.addEventListener( 'mousemove', this.onMouseMove.bind(this), false );
+        
+                
         this.domElement.addEventListener( 'keydown', this.onKeyDown.bind(this), false );
         this.domElement.addEventListener( 'keyup', this.onKeyUp.bind(this), false );
     
@@ -244,7 +249,7 @@
 
                     var distance = intersections[ 0 ].distance;
                     
-                    if ( !(distance <= actualMoveSpeed) ) {
+                    if ( !(distance <= actualMoveSpeed + this.option.cameraWidth) ) {
                         g.console.log(distance);
                         this.object.translateZ( - ( actualMoveSpeed + this.autoSpeedFactor ) );
                     }
@@ -263,7 +268,7 @@
 
                     var distance = intersections[ 0 ].distance;
                     
-                    if ( !(distance <= actualMoveSpeed) ) {
+                    if ( !(distance <= actualMoveSpeed + this.option.cameraWidth) ) {
                         g.console.log(distance);
                         this.object.translateZ( actualMoveSpeed );
                     }
@@ -279,9 +284,9 @@
                     x = temp.x,
                     y = temp.y,
                     z = temp.z,
-                    x1 = 1,
+                    x1 = -1,
                     y1 = y,
-                    z1 = -(x + y*y1)/z,
+                    z1 = -(x*x1 + y*y1)/z,
                     v = new g.THREE.Vector3(x1, y1, z1).normalize();
                 
                 ray.ray.direction.copy(v);
@@ -292,7 +297,7 @@
 
                     var distance = intersections[ 0 ].distance;
                     
-                    if ( !(distance <= actualMoveSpeed) ) {
+                    if ( !(distance <= actualMoveSpeed + this.option.cameraWidth) ) {
                         g.console.log(distance);
                         this.object.translateX( - actualMoveSpeed );
                     }
@@ -307,9 +312,9 @@
                     x = temp.x,
                     y = temp.y,
                     z = temp.z,
-                    x1 = -1,
+                    x1 = 1,
                     y1 = y,
-                    z1 = -(x + y*y1)/z,
+                    z1 = -(x*x1 + y*y1)/z,
                     v = new g.THREE.Vector3(x1, y1, z1).normalize();
                 
                 ray.ray.direction.copy(v);
@@ -320,7 +325,7 @@
 
                     var distance = intersections[ 0 ].distance;
                     
-                    if ( !(distance <= actualMoveSpeed) ) {
+                    if ( !(distance <= actualMoveSpeed + this.option.cameraWidth) ) {
                         g.console.log(distance);
                         this.object.translateX( actualMoveSpeed );
                     }
@@ -330,8 +335,8 @@
                 }                                
             }
     
-            if ( this.moveUp ) this.object.translateY( actualMoveSpeed );
-            if ( this.moveDown ) this.object.translateY( - actualMoveSpeed );
+            if (this.option.upable &&  this.moveUp) this.object.translateY( actualMoveSpeed );
+            if (this.option.downable && this.moveDown) this.object.translateY( - actualMoveSpeed );
     
             var actualLookSpeed = delta * this.lookSpeed;
     
