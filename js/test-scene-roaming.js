@@ -116,7 +116,8 @@
                 collisionObject: getMesh(this.object),
                 movementSpeed: 500,
                 lookSpeed: 0.05,
-                lookVertical: true
+                lookVertical: true,
+                collision:false
             });
             
             this.controls = controls;
@@ -172,7 +173,7 @@
         initEvent:function(){
             var
                 self = this,
-                projector = new THREE.Projector();;
+                projector = new THREE.Projector();
             this.renderer.domElement.addEventListener('click', function(event){
                 var
                     x = ( event.clientX / window.innerWidth ) * 2 - 1,
@@ -189,6 +190,26 @@
                     self.camera.position.z = 1000;
                 }
             }, false);
+            
+            this.initKeyEvent();
+        },
+        
+        initKeyEvent:function(){
+            var
+                self = this;
+            
+            function toggleCollision(){
+                var
+                    control = self.controls;
+                
+                control.setCollision(!control.isCollision());
+            }
+            document.addEventListener('keypress', function(e){
+                //按键为c
+                if(e.keyCode === 99){
+                    toggleCollision();
+                }
+            }, false)
         }     
     };
         
