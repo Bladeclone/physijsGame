@@ -26,7 +26,7 @@
             downable: true,//能否向下移动
             upable: true,//能否按键向上移动
             cameraWidth: 10,//摄像机的宽度，用来计算碰撞时摄像机与墙面建的距离
-            movementSpeed: 10.,//默认移动速度
+            movementSpeed: 1.0,//默认移动速度
             lookSpeed: 0.005,//默认视野切换速度
             lookVertical: true//是否能上下看
         }, option);
@@ -251,95 +251,117 @@
             var actualMoveSpeed = delta * this.movementSpeed;
     
             if ( this.moveForward || ( this.autoForward && !this.moveBackward ) ) {
-                var ray = new THREE.Raycaster();
-                ray.ray.direction.copy(this.target.clone().sub(this.object.position).normalize());
-                ray.ray.origin.copy( this.object.position );                
-                var intersections = ray.intersectObjects( this.option.collisionObject );
-
-                if ( intersections.length > 0 ) {
-
-                    var distance = intersections[ 0 ].distance;
-                    
-                    if ( !(distance <= actualMoveSpeed + this.option.cameraWidth) ) {
+                //判断似乎否开启碰撞检测
+                if(this.option.collision === true){
+                    var ray = new THREE.Raycaster();
+                    ray.ray.direction.copy(this.target.clone().sub(this.object.position).normalize());
+                    ray.ray.origin.copy( this.object.position );                
+                    var intersections = ray.intersectObjects( this.option.collisionObject );
+    
+                    if ( intersections.length > 0 ) {
+    
+                        var distance = intersections[ 0 ].distance;
+                        
+                        if ( !(distance <= actualMoveSpeed + this.option.cameraWidth) ) {
+                            this.object.translateZ( - ( actualMoveSpeed + this.autoSpeedFactor ) );
+                        }
+    
+                    }else{
                         this.object.translateZ( - ( actualMoveSpeed + this.autoSpeedFactor ) );
                     }
-
                 }else{
                     this.object.translateZ( - ( actualMoveSpeed + this.autoSpeedFactor ) );
-                }
+                }               
             }
-            if ( this.moveBackward ) {               
-                var ray = new THREE.Raycaster();
-                ray.ray.direction.copy(this.object.position.clone().sub(this.target).normalize());
-                ray.ray.origin.copy( this.object.position );                
-                var intersections = ray.intersectObjects( this.option.collisionObject );
-
-                if ( intersections.length > 0 ) {
-
-                    var distance = intersections[ 0 ].distance;
-                    
-                    if ( !(distance <= actualMoveSpeed + this.option.cameraWidth) ) {
+            if ( this.moveBackward ) { 
+                //判断似乎否开启碰撞检测
+                if(this.option.collision === true){
+                    var ray = new THREE.Raycaster();
+                    ray.ray.direction.copy(this.object.position.clone().sub(this.target).normalize());
+                    ray.ray.origin.copy( this.object.position );                
+                    var intersections = ray.intersectObjects( this.option.collisionObject );
+    
+                    if ( intersections.length > 0 ) {
+    
+                        var distance = intersections[ 0 ].distance;
+                        
+                        if ( !(distance <= actualMoveSpeed + this.option.cameraWidth) ) {
+                            this.object.translateZ( actualMoveSpeed );
+                        }
+    
+                    }else{
                         this.object.translateZ( actualMoveSpeed );
                     }
-
                 }else{
                     this.object.translateZ( actualMoveSpeed );
-                }
+                }                                             
             }
     
             if ( this.moveLeft ) {
-                var ray = new THREE.Raycaster(),
-                    temp = this.object.position.clone().sub(this.target).normalize(),
-                    x = temp.x,
-                    y = temp.y,
-                    z = temp.z,
-                    x1 = -1,
-                    y1 = y,
-                    z1 = -(x*x1 + y*y1)/z,
-                    v = new g.THREE.Vector3(x1, y1, z1).normalize();
-                
-                ray.ray.direction.copy(v);
-                ray.ray.origin.copy( this.object.position );                
-                var intersections = ray.intersectObjects( this.option.collisionObject );
-
-                if ( intersections.length > 0 ) {
-
-                    var distance = intersections[ 0 ].distance;
+                //判断似乎否开启碰撞检测
+                if(this.option.collision === true){
+                    var ray = new THREE.Raycaster(),
+                        temp = this.object.position.clone().sub(this.target).normalize(),
+                        x = temp.x,
+                        y = temp.y,
+                        z = temp.z,
+                        x1 = -1,
+                        y1 = y,
+                        z1 = -(x*x1 + y*y1)/z,
+                        v = new g.THREE.Vector3(x1, y1, z1).normalize();
                     
-                    if ( !(distance <= actualMoveSpeed + this.option.cameraWidth) ) {
+                    ray.ray.direction.copy(v);
+                    ray.ray.origin.copy( this.object.position );                
+                    var intersections = ray.intersectObjects( this.option.collisionObject );
+    
+                    if ( intersections.length > 0 ) {
+    
+                        var distance = intersections[ 0 ].distance;
+                        
+                        if ( !(distance <= actualMoveSpeed + this.option.cameraWidth) ) {
+                            this.object.translateX( - actualMoveSpeed );
+                        }
+    
+                    }else{
                         this.object.translateX( - actualMoveSpeed );
-                    }
-
+                    }             
                 }else{
                     this.object.translateX( - actualMoveSpeed );
-                }                
+                }
+                   
             }
             if ( this.moveRight ) {
-                var ray = new THREE.Raycaster(),
-                    temp = this.object.position.clone().sub(this.target).normalize(),
-                    x = temp.x,
-                    y = temp.y,
-                    z = temp.z,
-                    x1 = 1,
-                    y1 = y,
-                    z1 = -(x*x1 + y*y1)/z,
-                    v = new g.THREE.Vector3(x1, y1, z1).normalize();
-                
-                ray.ray.direction.copy(v);
-                ray.ray.origin.copy( this.object.position );                
-                var intersections = ray.intersectObjects( this.option.collisionObject );
-
-                if ( intersections.length > 0 ) {
-
-                    var distance = intersections[ 0 ].distance;
+                //判断似乎否开启碰撞检测
+                if(this.option.collision === true){
+                    var ray = new THREE.Raycaster(),
+                        temp = this.object.position.clone().sub(this.target).normalize(),
+                        x = temp.x,
+                        y = temp.y,
+                        z = temp.z,
+                        x1 = 1,
+                        y1 = y,
+                        z1 = -(x*x1 + y*y1)/z,
+                        v = new g.THREE.Vector3(x1, y1, z1).normalize();
                     
-                    if ( !(distance <= actualMoveSpeed + this.option.cameraWidth) ) {
+                    ray.ray.direction.copy(v);
+                    ray.ray.origin.copy( this.object.position );                
+                    var intersections = ray.intersectObjects( this.option.collisionObject );
+    
+                    if ( intersections.length > 0 ) {
+    
+                        var distance = intersections[ 0 ].distance;
+                        
+                        if ( !(distance <= actualMoveSpeed + this.option.cameraWidth) ) {
+                            this.object.translateX( actualMoveSpeed );
+                        }
+    
+                    }else{
                         this.object.translateX( actualMoveSpeed );
-                    }
-
+                    }                                
                 }else{
                     this.object.translateX( actualMoveSpeed );
-                }                                
+                }
+                
             }
     
             if (this.option.upable &&  this.moveUp) this.object.translateY( actualMoveSpeed );
@@ -450,6 +472,13 @@
         
             // Return the modified object
             return target;
+        },
+        
+        setCollision:function(collision){
+            return typeof collision === 'boolean' ? this.option.collision = collision : this.option.collision;
+        },
+        isCollision:function(){
+            return this.option.collision;
         }
     };
         
