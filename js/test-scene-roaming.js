@@ -83,7 +83,7 @@
             ground_material.map.wrapS = ground_material.map.wrapT = THREE.RepeatWrapping;
             ground_material.map.repeat.set( 3, 3 );
             
-            ground = new THREE.Mesh(new THREE.CubeGeometry(30000, 1, 30000), ground_material, 0);
+            ground = new THREE.Mesh(new THREE.CubeGeometry(30000, 0.1, 30000), ground_material, 0);
             ground.position.y = -2;
             this.scene.add(ground);
         },
@@ -116,8 +116,8 @@
             controls = new THREE.BorderMouseFirstPersonControls({
                 camera: this.camera,
                 collisionObject: getMesh(this.object),
-                movementSpeed: 5000,
-                lookSpeed: 0.05,
+                movementSpeed: 1000,
+                lookSpeed: 0.1,
                 lookVertical: true,
                 collision:false
             });
@@ -135,7 +135,7 @@
                 );
             
             camera.position.set(-3500, 1000, 5000);
-            camera.lookAt(this.scene.position);
+            camera.rotation.y = 0;
             this.camera = camera;
             this.scene.add(camera);            
         },
@@ -222,15 +222,23 @@
                 option = {
                     px: position.x,
                     pz: position.z,
-                    ry: rotation.y
+                    rz: rotation.y
                 },
                 tween = new TWEEN.Tween(option)
-                    .to({px: [position.x, 0], pz: [-3000, position.z]}, 10000 )
+                    .to({
+                            px: [-3500, -3500, -1000,- 1000, -1000, -1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 4000, 4000, 4000, 4000, 4000, 4000, 4000, 4000, 4000, -1000, -1000], 
+                            pz: [-3000, -3000, -3000, -3000, 3000, 1000, 1000, 1000, -3000, -3000, -3000, 1000, 1000, 1000, 1000, -3000, -3000, 1000, 5000, 5000, 1000, 1000, 1000, 1000], 
+                            rz: [0, -Math.PI/2, -Math.PI/2, -Math.PI, -Math.PI, -Math.PI/2, -Math.PI/2, 0, 0, -Math.PI/2, -Math.PI, -Math.PI, -Math.PI/2, -Math.PI/2, 0, 0, -Math.PI, -Math.PI, -Math.PI, 0, 0, Math.PI/2, Math.PI/2, 0]
+                        }, 50000 )
                     .onUpdate(function () {
                         position.z = this.pz;
                         position.x = this.px;
+                        rotation.y = this.rz;
+                        console.log("pz=", this.pz);
+                        console.log("px=", this.px);
+                        console.log("ry=", this.rz);
                     })
-                    .delay(5000)
+                    .delay(3000)
                     .start();
                     
             this.tween = tween;
