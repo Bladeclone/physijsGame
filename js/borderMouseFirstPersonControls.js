@@ -25,7 +25,7 @@
             collisionObject: [],//要检测的碰撞对象
             downable: true,//能否向下移动
             upable: true,//能否按键向上移动
-            cameraWidth: 10,//摄像机的宽度，用来计算碰撞时摄像机与墙面建的距离
+            cameraWidth: 100,//摄像机的宽度，用来计算碰撞时摄像机与墙面建的距离
             movementSpeed: 1.0,//默认移动速度
             lookSpeed: 0.005,//默认视野切换速度
             lookVertical: true//是否能上下看
