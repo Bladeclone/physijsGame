@@ -28,12 +28,14 @@
             this.initGround();
             this.initPlane();
             this.initLoad();
-            this.initEvent();                                
+            this.initEvent();
+            this.initRoaming();                                
         },
         
         animation:function(){
             var self = this;
             function render() {
+                TWEEN.update();
                 self.controls.update( self.clock.getDelta() );
                 self.renderer.render( self.scene, self.camera );
                 requestAnimationFrame( render );
@@ -114,7 +116,7 @@
             controls = new THREE.BorderMouseFirstPersonControls({
                 camera: this.camera,
                 collisionObject: getMesh(this.object),
-                movementSpeed: 500,
+                movementSpeed: 5000,
                 lookSpeed: 0.05,
                 lookVertical: true,
                 collision:false
@@ -210,6 +212,28 @@
                     toggleCollision();
                 }
             }, false)
+        },
+        
+        initRoaming:function(){
+            var 
+                camera = this.camera,
+                position = camera.position,
+                rotation = camera.rotation,
+                option = {
+                    px: position.x,
+                    pz: position.z,
+                    ry: rotation.y
+                },
+                tween = new TWEEN.Tween(option)
+                    .to({px: [position.x, 0], pz: [-3000, position.z]}, 10000 )
+                    .onUpdate(function () {
+                        position.z = this.pz;
+                        position.x = this.px;
+                    })
+                    .delay(5000)
+                    .start();
+                    
+            this.tween = tween;
         }     
     };
         
