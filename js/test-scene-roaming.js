@@ -28,8 +28,7 @@
             this.initGround();
             this.initPlane();
             this.initLoad();
-            this.initEvent();
-            this.initRoaming();                                
+            this.initEvent();                               
         },
         
         animation:function(){
@@ -119,7 +118,7 @@
                 movementSpeed: 1000,
                 lookSpeed: 0.1,
                 lookVertical: true,
-                collision:false
+                collisionable:false
             });
             
             this.controls = controls;
@@ -152,6 +151,7 @@
                 self.scene.add( object );
                 self.initControls.call(self);
                 self.animation.call(self);
+                self.initRoaming.call(self);
                 //self.camera.lookAt(new THREE.Vector3(0,-100,0));
     
             });
@@ -200,23 +200,18 @@
             var
                 self = this;
             
-            function toggleCollision(){
-                var
-                    control = self.controls;
-                
-                control.setCollision(!control.isCollision());
-            }
             document.addEventListener('keypress', function(e){
                 //按键为c
                 if(e.keyCode === 99){
-                    toggleCollision();
+                    self.controls.toggleCollisionable();
                 }
-            }, false)
+            }, false);
         },
         
         initRoaming:function(){
             var 
                 camera = this.camera,
+                control = this.controls,
                 position = camera.position,
                 rotation = camera.rotation,
                 option = {
@@ -226,10 +221,13 @@
                 },
                 tween = new TWEEN.Tween(option)
                     .to({
-                            px: [-3500, -3500, -1000,- 1000, -1000, -1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 4000, 4000, 4000, 4000, 4000, 4000, 4000, 4000, 4000, -1000, -1000], 
-                            pz: [-3000, -3000, -3000, -3000, 3000, 1000, 1000, 1000, -3000, -3000, -3000, 1000, 1000, 1000, 1000, -3000, -3000, 1000, 5000, 5000, 1000, 1000, 1000, 1000], 
-                            rz: [0, -Math.PI/2, -Math.PI/2, -Math.PI, -Math.PI, -Math.PI/2, -Math.PI/2, 0, 0, -Math.PI/2, -Math.PI, -Math.PI, -Math.PI/2, -Math.PI/2, 0, 0, -Math.PI, -Math.PI, -Math.PI, 0, 0, Math.PI/2, Math.PI/2, 0]
+                            px: [-3500, -3500, -3500, -1000,- 1000, -1000, -1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 4000, 4000, 4000, 4000, 4000, 4000, 4000, 4000, 4000, -1000, -1000], 
+                            pz: [1000, -3000, -3000, -3000, -3000, 3000, 1000, 1000, 1000, -3000, -3000, -3000, 1000, 1000, 1000, 1000, -3000, -3000, 1000, 5000, 5000, 1000, 1000, 1000, 1000], 
+                            rz: [0, 0, -Math.PI/2, -Math.PI/2, -Math.PI, -Math.PI, -Math.PI/2, -Math.PI/2, 0, 0, -Math.PI/2, -Math.PI, -Math.PI, -Math.PI/2, -Math.PI/2, 0, 0, -Math.PI, -Math.PI, -Math.PI, 0, 0, Math.PI/2, Math.PI/2, 0]
                         }, 50000 )
+                    .onStart(function() {
+                        control.setMouseControlable(false);
+                    })
                     .onUpdate(function () {
                         position.z = this.pz;
                         position.x = this.px;
@@ -238,7 +236,10 @@
                         console.log("px=", this.px);
                         console.log("ry=", this.rz);
                     })
-                    .delay(3000)
+                    .onComplete(function() {
+                        control.setMouseControlable(true);
+                    })
+                    .delay(1000)
                     .start();
                     
             this.tween = tween;

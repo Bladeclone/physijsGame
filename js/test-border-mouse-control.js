@@ -130,11 +130,16 @@
                 return rets;
 
             }
-            controls = new THREE.BorderMouseFirstPersonControls({camera: this.camera, collisionObject: getMesh(this.object)})
-
-            controls.movementSpeed = 1000;
-            controls.lookSpeed = 0.125;
-            controls.lookVertical = true;
+            controls = new THREE.BorderMouseFirstPersonControls({
+                camera: this.camera,
+                collisionObject: getMesh(this.object),
+                movementSpeed: 1000,
+                lookSpeed: 0.1,
+                lookVertical: true,
+                collisionable:false,
+                groundable: true,
+                cameraHeight: 1000
+            });
             
             this.controls = controls;
             this.clock = clock;
@@ -230,6 +235,20 @@
 
                 if ( intersects.length > 0 ) {
                     self.camera.position.z = 1000;
+                }
+            }, false);
+            
+            this.initKeyEvent();
+        },
+        
+        initKeyEvent:function(){
+            var
+                self = this;
+            
+            document.addEventListener('keypress', function(e){
+                //按键为c
+                if(e.keyCode === 99){
+                    self.controls.toggleCollisionable();
                 }
             }, false);
         }     
