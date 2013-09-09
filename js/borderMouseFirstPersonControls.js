@@ -19,16 +19,20 @@
     BorderMouseFirstPersonControls = function(option){
         
         this.option = this.extend({
-            collision: true,//是否添加相机碰撞检测
+            collisionable: true,//是否添加相机碰撞检测
             mouseDownMove: false,//是否添加默认鼠标点击前进后退事件
             borderWidth: 100,//默认数遍边界值为100
             collisionObject: [],//要检测的碰撞对象
             downable: true,//能否向下移动
             upable: true,//能否按键向上移动
             cameraWidth: 100,//摄像机的宽度，用来计算碰撞时摄像机与墙面建的距离
+            cameraHeight: 100,//设置相机的默认高度
             movementSpeed: 1.0,//默认移动速度
             lookSpeed: 0.005,//默认视野切换速度
-            lookVertical: true//是否能上下看
+            lookVertical: true,//是否能上下看
+            mouseControlable: true,//鼠标控制是否管用
+            ground: 0,//设置默认地面高度
+            groundable: false //默认不启用地面
         }, option);
         
         this.object = this.option.camera;
@@ -252,7 +256,7 @@
     
             if ( this.moveForward || ( this.autoForward && !this.moveBackward ) ) {
                 //判断似乎否开启碰撞检测
-                if(this.option.collision === true){
+                if(this.isCollisionable() === true){
                     var ray = new THREE.Raycaster();
                     ray.ray.direction.copy(this.target.clone().sub(this.object.position).normalize());
                     ray.ray.origin.copy( this.object.position );                
@@ -275,7 +279,7 @@
             }
             if ( this.moveBackward ) { 
                 //判断似乎否开启碰撞检测
-                if(this.option.collision === true){
+                if(this.isCollisionable() === true){
                     var ray = new THREE.Raycaster();
                     ray.ray.direction.copy(this.object.position.clone().sub(this.target).normalize());
                     ray.ray.origin.copy( this.object.position );                
@@ -299,7 +303,7 @@
     
             if ( this.moveLeft ) {
                 //判断似乎否开启碰撞检测
-                if(this.option.collision === true){
+                if(this.isCollisionable() === true){
                     var ray = new THREE.Raycaster(),
                         temp = this.object.position.clone().sub(this.target).normalize(),
                         x = temp.x,
@@ -332,7 +336,7 @@
             }
             if ( this.moveRight ) {
                 //判断似乎否开启碰撞检测
-                if(this.option.collision === true){
+                if(this.isCollisionable() === true){
                     var ray = new THREE.Raycaster(),
                         temp = this.object.position.clone().sub(this.target).normalize(),
                         x = temp.x,
@@ -365,7 +369,19 @@
             }
     
             if (this.option.upable &&  this.moveUp) this.object.translateY( actualMoveSpeed );
-            if (this.option.downable && this.moveDown) this.object.translateY( - actualMoveSpeed );
+            
+            if (this.option.downable && this.moveDown) {
+                //判断是否启用地面设置
+                if (this.isGroundable() === true) {
+                    if (this.object.position.y - actualMoveSpeed < this.option.ground + this.option.cameraHeight) {
+                        this.object.position.y = this.option.ground + this.option.cameraHeight;
+                    } else {
+                        this.object.translateY( - actualMoveSpeed );
+                    }
+                } else {
+                    this.object.translateY( - actualMoveSpeed );
+                }                
+            }
     
             var actualLookSpeed = delta * this.lookSpeed;
     
@@ -406,8 +422,10 @@
             targetPosition.x = position.x + 100 * Math.sin( this.phi ) * Math.cos( this.theta );
             targetPosition.y = position.y + 100 * Math.cos( this.phi );
             targetPosition.z = position.z + 100 * Math.sin( this.phi ) * Math.sin( this.theta );
-    
-            //this.object.lookAt( targetPosition );
+            
+            if(this.option.mouseControlable === true){
+                this.object.lookAt( targetPosition );
+            }            
         },
         
         extend:function() {
@@ -474,11 +492,39 @@
             return target;
         },
         
-        setCollision:function(collision){
-            return typeof collision === 'boolean' ? this.option.collision = collision : this.option.collision;
+        setCollisionable:function(collisionable){
+            return typeof collisionable === 'boolean' ? this.option.collisionable = collisionable : this.option.collisionable;
         },
-        isCollision:function(){
-            return this.option.collision;
+        isCollisionable:function(){
+            return this.option.collisionable;
+        },
+        
+        toggleCollisionable: function() {
+            return this.setCollisionable(!this.isCollisionable());
+        },
+        
+        isMouseControlable: function() {
+            return this.option.mouseControlable;
+        },
+        
+        setMouseControlable: function(mouseControlable) {
+            return typeof mouseControlable === 'boolean' ? this.option.mouseControlable = mouseControlable : this.option.mouseControlable;
+        },
+        
+        toggleMouseControlable: function() {
+            return this.setMouseControlable(!this.isMouseControlable());
+        },
+        
+        isGroundable: function() {
+            return this.option.groundable;
+        },
+        
+        setGroundable: function(groundable) {
+            return typeof groundable === 'boolean' ? this.option.groundable = groundable : this.option.groundable;
+        },
+        
+        toggleGroundable: function() {
+            return this.setGroundable(!this.isGroundable());
         }
     };
         
